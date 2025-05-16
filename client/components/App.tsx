@@ -3,6 +3,7 @@ import { Sun } from "react-feather";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useWakeLock } from "../utils/useWakeLock";
 import Button from "./Button";
+import ImportWorkout from "./ImportWorkout";
 import InstallDialog from "./InstallDialog";
 import logoWhite from "/assets/logo-horizontal-white.png";
 import logo from "/assets/logo-horizontal.png";
@@ -22,10 +23,10 @@ interface Exercise {
   note: string;
 }
 
-const DEFAULT_EXERCISES: Omit<Exercise, "completedSets" | "note">[] = [
-  { id: 1, name: "Double‑DB Front Squat", defaultLoad: 40, sets: 3 },
-  { id: 2, name: "Dumbbell Bench Press", defaultLoad: 40, sets: 3 },
-  { id: 3, name: "Seated Overhead Press", defaultLoad: 20, sets: 4 },
+const DEFAULT_EXERCISES: Omit<Exercise, "completedSets">[] = [
+  { id: 1, name: "Double‑DB Front Squat", defaultLoad: 40, sets: 3, note: "" },
+  { id: 2, name: "Dumbbell Bench Press", defaultLoad: 40, sets: 3, note: "" },
+  { id: 3, name: "Seated Overhead Press", defaultLoad: 20, sets: 4, note: "" },
 ];
 
 const LS_KEY = "WorkoutTracker:exercises";
@@ -46,6 +47,7 @@ export default function App() {
   const [rest, setRest] = useState(0);
   const [restActive, setRestActive] = useState(false);
   const [showInstallDialog, setShowInstallDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   const timerRef = useRef<number>(0);
   const beepRef = useRef<HTMLAudioElement>(new Audio(BEEP_URL));
@@ -113,16 +115,26 @@ export default function App() {
 
   const resetWorkout = () => setExercises(initState());
 
+  const importWorkout = (workoutData: Omit<Exercise, "completedSets">[]) => {
+    // Transform imported data to include completedSets
+    const newExercises = workoutData.map((ex) => ({
+      ...ex,
+      completedSets: Array(ex.sets).fill({ reps: "", load: ex.defaultLoad }),
+      note: ex.note || "",
+    }));
+    setExercises(newExercises);
+  };
+
   const exportReport = () => {
     const date = new Date().toLocaleDateString();
     const lines = exercises.map((ex) => {
       const sets = ex.completedSets
         .map((s) => `${s.load}lb x${s.reps || "?"}`)
         .join(", ");
-      return `- ${ex.name}: ${sets}${ex.note ? ` // ${ex.note}` : ""}`;
+      return `${ex.name}: ${sets}${ex.note ? ` (${ex.note})` : ""}`;
     });
     navigator.clipboard
-      .writeText(`**Workout Log – ${date}**\n${lines.join("\n")}`)
+      .writeText(`${date}\n${lines.join("\n")}`)
       .then(() => alert("Report copied to clipboard!"));
   };
 
@@ -144,18 +156,13 @@ export default function App() {
           {!isInstalled && (
             <button
               onClick={() => setShowInstallDialog(true)}
-              className="text-xs bg-blue-500 hover:bg-blue-600 text-white !py-1 !px-3 rounded-full shadow-sm"
+              className="text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 !py-1 !px-3 rounded-full"
             >
               Install app
             </button>
           )}
+          <Button onClick={() => setShowImportDialog(true)}>Import</Button>
           <Button onClick={exportReport}>Export</Button>
-          <Button
-            onClick={resetWorkout}
-            className="!bg-transparent !text-gray-700 dark:!text-gray-300 border border-gray-300 dark:border-gray-600"
-          >
-            Reset
-          </Button>
         </div>
       </nav>
 
@@ -239,6 +246,12 @@ export default function App() {
       <InstallDialog
         isOpen={showInstallDialog}
         onClose={() => setShowInstallDialog(false)}
+      />
+
+      <ImportWorkout
+        isOpen={showImportDialog}
+        onClose={() => setShowImportDialog(false)}
+        onImport={importWorkout}
       />
     </main>
   );
