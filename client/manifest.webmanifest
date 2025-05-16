@@ -1,6 +1,6 @@
 {
-  "name": "Phoenix Workout",
-  "short_name": "Phoenix Workout",
+  "name": "Phoenix",
+  "short_name": "Phoenix",
   "description": "Workout app",
   "start_url": "/",
   "display": "standalone",

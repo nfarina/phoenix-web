@@ -209,7 +209,7 @@ export default function App() {
               height: "auto",
             }}
             src={isDarkMode ? logoWhite : logo}
-            alt="Phoenix Workout Logo"
+            alt="Phoenix Logo"
           />
         </div>
         <div className="flex gap-2 p-2 items-center">
