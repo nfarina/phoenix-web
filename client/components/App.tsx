@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { Moon, Sun } from "react-feather";
 import { useLocalStorage } from "../utils/useLocalStorage";
+import { useWakeLock } from "../utils/useWakeLock";
 import Button from "./Button";
 import logoWhite from "/assets/logo-horizontal-white.png";
 import logo from "/assets/logo-horizontal.png";
@@ -47,6 +49,9 @@ export default function App() {
       document.documentElement.classList.contains("dark")
     );
   });
+
+  const { isSupported, isActive, requestWakeLock, releaseWakeLock } =
+    useWakeLock();
 
   // Rest timer effect
   useEffect(() => {
@@ -116,7 +121,7 @@ export default function App() {
   return (
     <main className="h-full flex flex-col dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <nav className="flex items-center justify-between bg-white dark:bg-gray-800 shadow-xs">
+      <nav className="flex items-center justify-between bg-white dark:bg-gray-800 shadow-xs px-5">
         <div className="flex items-center">
           <img
             style={{
@@ -170,7 +175,7 @@ export default function App() {
                   onChange={(e) =>
                     updateSet(ex.id, idx, "load", Number(e.target.value))
                   }
-                  className="border rounded p-1 text-center dark:bg-gray-900"
+                  className="border-gray-200 dark:border-gray-700 border rounded p-1 text-center dark:bg-gray-900"
                 />
                 <input
                   type="number"
@@ -178,14 +183,14 @@ export default function App() {
                   onChange={(e) =>
                     updateSet(ex.id, idx, "reps", e.target.value)
                   }
-                  className="border rounded p-1 text-center dark:bg-gray-900"
+                  className="border-gray-200 dark:border-gray-700 border rounded p-1 text-center dark:bg-gray-900"
                 />
                 <span className="text-sm text-gray-500">Set {idx + 1}</span>
               </div>
             ))}
 
             <textarea
-              className="w-full border rounded p-2 text-sm dark:bg-gray-900"
+              className="w-full border-gray-200 dark:border-gray-700 border rounded p-2 text-sm dark:bg-gray-900"
               placeholder="Notes…"
               value={ex.note}
               onChange={(e) => updateNote(ex.id, e.target.value)}
@@ -195,10 +200,24 @@ export default function App() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-100 dark:bg-gray-700 px-4 py-3 flex flex-row gap-2 shadow-inner justify-center">
-        <Button onClick={toggleRest} className="flex-1">
+      <footer className="bg-gray-100 dark:bg-gray-700 px-5 py-3 flex flex-row gap-2 shadow-inner justify-between">
+        <Button onClick={toggleRest} className="!p-2 !px-6">
           {restActive ? "Stop rest" : "Start rest"}
         </Button>
+        {isSupported && (
+          <Button
+            onClick={() => (isActive ? releaseWakeLock() : requestWakeLock())}
+            className={`!p-3 aspect-square ${
+              isActive
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+            }`}
+            aria-label={isActive ? "Turn screen lock off" : "Keep screen on"}
+            title={isActive ? "Turn screen lock off" : "Keep screen on"}
+          >
+            {isActive ? <Moon size={20} /> : <Sun size={20} />}
+          </Button>
+        )}
       </footer>
     </main>
   );
