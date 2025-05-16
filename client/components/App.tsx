@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Sun } from "react-feather";
+import { Minus, Plus, Sun } from "react-feather";
 import { useIsDarkMode } from "../hooks/useIsDarkMode";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useWakeLock } from "../utils/useWakeLock";
@@ -167,6 +167,37 @@ export default function App() {
       .then(() => alert("Report copied to clipboard!"));
   };
 
+  const addSet = (id: number) => {
+    setExercises((prev) =>
+      prev.map((ex) =>
+        ex.id === id
+          ? {
+              ...ex,
+              sets: ex.sets + 1,
+              completedSets: [
+                ...ex.completedSets,
+                { reps: "", load: ex.defaultLoad },
+              ],
+            }
+          : ex,
+      ),
+    );
+  };
+
+  const removeSet = (id: number, idx: number) => {
+    setExercises((prev) =>
+      prev.map((ex) =>
+        ex.id === id
+          ? {
+              ...ex,
+              sets: Math.max(1, ex.sets - 1),
+              completedSets: ex.completedSets.filter((_, i) => i !== idx),
+            }
+          : ex,
+      ),
+    );
+  };
+
   return (
     <main className="h-full flex flex-col dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
@@ -204,14 +235,29 @@ export default function App() {
           >
             <div className="flex items-center justify-between">
               <span className="font-semibold">{ex.name}</span>
+              <button
+                onClick={() => addSet(ex.id)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                title="Add set"
+              >
+                <Plus size={16} />
+              </button>
             </div>
 
-            <div className="flex gap-4">
+            <div
+              className="flex gap-4"
+              style={{
+                minHeight:
+                  ex.completedSets.length > 0
+                    ? `${Math.max(ex.completedSets.length * 40, 80)}px`
+                    : "80px",
+              }}
+            >
               <div className="flex flex-col gap-2">
                 {ex.completedSets.map((set, idx) => (
                   <div
                     key={idx}
-                    className="grid grid-cols-[80px_80px] gap-2 items-center"
+                    className="grid grid-cols-[80px_80px_auto] gap-2 items-center"
                   >
                     <input
                       type="number"
@@ -229,17 +275,26 @@ export default function App() {
                       }
                       className="border-gray-200 dark:border-gray-700 border rounded p-1 text-center dark:bg-gray-900"
                     />
+                    <button
+                      onClick={() => removeSet(ex.id, idx)}
+                      className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
+                      title="Remove set"
+                    >
+                      <Minus size={14} />
+                    </button>
                   </div>
                 ))}
               </div>
 
-              <textarea
-                className="flex-1 self-stretch border-gray-200 dark:border-gray-700 border rounded p-2 text-sm dark:bg-gray-900"
-                placeholder="Notes…"
-                value={ex.note}
-                onChange={(e) => updateNote(ex.id, e.target.value)}
-                style={{ height: "100%" }}
-              />
+              <div className="flex-1 flex">
+                <textarea
+                  className="w-full border-gray-200 dark:border-gray-700 border rounded p-2 text-sm dark:bg-gray-900"
+                  placeholder="Notes…"
+                  value={ex.note}
+                  onChange={(e) => updateNote(ex.id, e.target.value)}
+                  style={{ resize: "none" }}
+                />
+              </div>
             </div>
           </section>
         ))}
@@ -253,7 +308,13 @@ export default function App() {
             restActive ? "!bg-orange-500 hover:!bg-orange-600" : ""
           }`}
         >
-          {restActive ? `Rest: ${rest}s` : "Start rest"}
+          {restActive ? (
+            <span style={{ fontVariantNumeric: "tabular-nums" }}>
+              Rest: {rest}s
+            </span>
+          ) : (
+            "Start rest"
+          )}
         </Button>
         {isSupported && (
           <Button
