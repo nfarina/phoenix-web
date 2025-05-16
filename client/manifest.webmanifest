@@ -1,7 +1,7 @@
 {
-  "name": "Iso Translate",
-  "short_name": "Iso",
-  "description": "Real-time passive translation app",
+  "name": "Phoenix Workout",
+  "short_name": "Phoenix Workout",
+  "description": "Workout app",
   "start_url": "/",
   "display": "standalone",
   "icons": [

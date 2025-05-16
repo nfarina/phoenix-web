@@ -1,54 +1,55 @@
-# Iso Translate
+# Phoenix Workout Tracker
 
-A client-side web application for real-time English/Japanese translation using OpenAI's Realtime API.
+A client-side web application for tracking your workouts with customizable exercises, rest timers, and workout logging.
 
 ## Features
 
-- Real-time translation between English and Japanese
-- Voice input and translation
-- Clean, responsive UI
-- Supports multiple speakers with color coding
-- Progressive Web App (PWA) support for mobile devices
+- Track exercise sets, weights, and reps
+- Built-in rest timer between sets with audio notification
+- Note-taking for each exercise
+- Export workout data to clipboard
+- Dark mode support
+- Responsive UI for mobile and desktop
+- Data persistence using localStorage
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js (v16 or newer)
-- npm
-- OpenAI API key
+- Yarn or npm
 
 ### Installation
 
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/iso-translate.git
-cd iso-translate
+git clone https://github.com/yourusername/phoenix-web.git
+cd phoenix-web
 ```
 
 2. Install dependencies
 
 ```bash
-npm install
+yarn install
 ```
 
 3. Development
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 4. Build for production
 
 ```bash
-npm run build
+yarn build
 ```
 
 5. Preview production build
 
 ```bash
-npm run preview
+yarn preview
 ```
 
 ## Deployment to Firebase
@@ -74,25 +75,19 @@ firebase init
 4. Deploy to Firebase
 
 ```bash
-npm run deploy
+yarn deploy
 ```
 
 Or manually:
 
 ```bash
-npm run build
+yarn build
 firebase deploy
 ```
-
-## Configuration
-
-- You will need to provide an OpenAI API key when using the application
-- The API key is stored in your browser's localStorage
 
 ## Tech Stack
 
 - React
 - Vite
 - Tailwind CSS
-- OpenAI Realtime API
 - Firebase Hosting

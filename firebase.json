@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "isotranslate",
+    "site": "phoenixworkout",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -14,4 +14,4 @@
       }
     ]
   }
-} 
+}

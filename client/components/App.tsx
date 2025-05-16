@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import Button from "./Button";
+import logoWhite from "/assets/logo-horizontal-white.png";
+import logo from "/assets/logo-horizontal.png";
 
 interface Exercise {
   id: number;
@@ -37,6 +39,14 @@ export default function App() {
 
   const timerRef = useRef<number>(0);
   const beepRef = useRef<HTMLAudioElement>(new Audio(BEEP_URL));
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia("(prefers-color-scheme: dark)").matches ||
+      document.documentElement.classList.contains("dark")
+    );
+  });
 
   // Rest timer effect
   useEffect(() => {
@@ -106,9 +116,18 @@ export default function App() {
   return (
     <main className="h-full flex flex-col dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <nav className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 shadow-xs">
-        <h1 className="text-xl font-bold">Today’s Workout</h1>
-        <div className="flex gap-2">
+      <nav className="flex items-center justify-between bg-white dark:bg-gray-800 shadow-xs">
+        <div className="flex items-center">
+          <img
+            style={{
+              width: "125px",
+              height: "auto",
+            }}
+            src={isDarkMode ? logoWhite : logo}
+            alt="Phoenix Workout Logo"
+          />
+        </div>
+        <div className="flex gap-2 p-2">
           <Button onClick={exportReport}>Export</Button>
           <Button
             onClick={resetWorkout}
@@ -176,9 +195,9 @@ export default function App() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-100 dark:bg-gray-700 px-4 py-3 flex gap-2 shadow-inner">
+      <footer className="bg-gray-100 dark:bg-gray-700 px-4 py-3 flex flex-row gap-2 shadow-inner justify-center">
         <Button onClick={toggleRest} className="flex-1">
-          {restActive ? "Stop Rest" : "Start Rest"}
+          {restActive ? "Stop rest" : "Start rest"}
         </Button>
       </footer>
     </main>
