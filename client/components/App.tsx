@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Moon, Sun } from "react-feather";
+import { Sun } from "react-feather";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useWakeLock } from "../utils/useWakeLock";
 import Button from "./Button";
@@ -215,7 +215,7 @@ export default function App() {
             aria-label={isActive ? "Turn screen lock off" : "Keep screen on"}
             title={isActive ? "Turn screen lock off" : "Keep screen on"}
           >
-            {isActive ? <Moon size={20} /> : <Sun size={20} />}
+            {<Sun size={20} />}
           </Button>
         )}
       </footer>
