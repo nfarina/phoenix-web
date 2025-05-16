@@ -3,8 +3,15 @@ import { Sun } from "react-feather";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useWakeLock } from "../utils/useWakeLock";
 import Button from "./Button";
+import InstallDialog from "./InstallDialog";
 import logoWhite from "/assets/logo-horizontal-white.png";
 import logo from "/assets/logo-horizontal.png";
+
+// Check if the app is already installed
+const isInstalled =
+  typeof window !== "undefined" &&
+  "standalone" in window.navigator &&
+  (window.navigator as any).standalone;
 
 interface Exercise {
   id: number;
@@ -38,6 +45,7 @@ export default function App() {
   );
   const [rest, setRest] = useState(0);
   const [restActive, setRestActive] = useState(false);
+  const [showInstallDialog, setShowInstallDialog] = useState(false);
 
   const timerRef = useRef<number>(0);
   const beepRef = useRef<HTMLAudioElement>(new Audio(BEEP_URL));
@@ -132,7 +140,15 @@ export default function App() {
             alt="Phoenix Workout Logo"
           />
         </div>
-        <div className="flex gap-2 p-2">
+        <div className="flex gap-2 p-2 items-center">
+          {!isInstalled && (
+            <button
+              onClick={() => setShowInstallDialog(true)}
+              className="text-xs bg-blue-500 hover:bg-blue-600 text-white !py-1 !px-3 rounded-full shadow-sm"
+            >
+              Install app
+            </button>
+          )}
           <Button onClick={exportReport}>Export</Button>
           <Button
             onClick={resetWorkout}
@@ -215,10 +231,15 @@ export default function App() {
             aria-label={isActive ? "Turn screen lock off" : "Keep screen on"}
             title={isActive ? "Turn screen lock off" : "Keep screen on"}
           >
-            {<Sun size={20} />}
+            <Sun size={20} />
           </Button>
         )}
       </footer>
+
+      <InstallDialog
+        isOpen={showInstallDialog}
+        onClose={() => setShowInstallDialog(false)}
+      />
     </main>
   );
 }
